@@ -1,0 +1,1 @@
+"""Safety, rights and provenance."""
