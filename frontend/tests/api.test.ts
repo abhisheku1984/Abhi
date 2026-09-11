@@ -9,7 +9,10 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 describe('api client', () => {
+  let realLocalStorage: Storage;
+
   beforeEach(() => {
+    realLocalStorage = window.localStorage;
     localStorage.clear();
     setAccessToken(null);
     setUnauthorizedHandler(null);
@@ -17,6 +20,11 @@ describe('api client', () => {
   });
 
   afterEach(() => {
+    // Undo the blocked-storage simulation, if this test installed it.
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      value: realLocalStorage,
+    });
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -80,6 +88,28 @@ describe('api client', () => {
     expect(getAccessToken()).toBeNull();
     expect(localStorage.getItem('acs.token')).toBeNull();
     expect(onUnauthorized).toHaveBeenCalledOnce();
+  });
+
+  it('still boots and stores the token when localStorage is blocked', async () => {
+    // Embedded previews / strict privacy modes throw on any localStorage access.
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      get() {
+        throw new Error("SecurityError: access to localStorage is denied");
+      },
+    });
+
+    let captured: Record<string, string> = {};
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse({ items: [] })),
+    );
+    setAccessToken('token-embedded');
+    await api.get('/projects');
+
+    const [, init] = (globalThis.fetch as any).mock.calls[0];
+    captured = init.headers;
+    expect(captured.Authorization).toBe('Bearer token-embedded');
   });
 
   it('encodes query params and skips empty values', async () => {

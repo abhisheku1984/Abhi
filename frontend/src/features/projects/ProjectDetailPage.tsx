@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Archive, History, Layers, Trash2 } from 'lucide-react';
-import { Asset, Project, endpoints } from '@/lib/api';
+import { Asset, Project, authHeaders, endpoints } from '@/lib/api';
 import { AssetCard, AssetModal } from '@/components/assets/AssetCard';
 import { Badge, Button, Card, EmptyState, SectionTitle, Tabs } from '@/components/ui';
 import { relativeTime } from '@/lib/format';
@@ -33,7 +33,7 @@ export function ProjectDetailPage() {
   useEffect(() => {
     if (tab === 'versions' && id) {
       fetch(`/api/v1/projects/${id}/versions`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('acs.token') ?? ''}` },
+        headers: authHeaders(),
       })
         .then((r) => r.json())
         .then((d) => setVersions(d.items ?? []))
@@ -49,7 +49,7 @@ export function ProjectDetailPage() {
     try {
       await fetch(`/api/v1/projects/${id}/versions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('acs.token') ?? ''}` },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ label: 'Manual snapshot' }),
       });
       toast({ kind: 'success', title: 'Version saved' });
@@ -64,7 +64,7 @@ export function ProjectDetailPage() {
     try {
       await fetch(`/api/v1/projects/${id}/versions/${versionId}/restore`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('acs.token') ?? ''}` },
+        headers: authHeaders(),
       });
       toast({ kind: 'success', title: 'Version restored' });
       load();

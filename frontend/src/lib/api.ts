@@ -18,17 +18,48 @@ export class ApiError extends Error {
   }
 }
 
-let accessToken: string | null = localStorage.getItem('acs.token');
+const TOKEN_KEY = 'acs.token';
+
+// Storage can be unavailable or blocked — inside a sandboxed or third-party
+// iframe (embedded previews, strict privacy modes) merely touching
+// `localStorage` throws a SecurityError. Never let that take the whole app
+// down at import time: fall back to an in-memory store instead.
+const memoryStore = new Map<string, string>();
+
+function storageGet(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return memoryStore.get(key) ?? null;
+  }
+}
+
+function storageSet(key: string, value: string | null) {
+  try {
+    if (value === null) window.localStorage.removeItem(key);
+    else window.localStorage.setItem(key, value);
+  } catch {
+    /* storage blocked — memory fallback below keeps the session usable */
+  }
+  if (value === null) memoryStore.delete(key);
+  else memoryStore.set(key, value);
+}
+
+let accessToken: string | null = storageGet(TOKEN_KEY);
 let onUnauthorized: (() => void) | null = null;
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
-  if (token) localStorage.setItem('acs.token', token);
-  else localStorage.removeItem('acs.token');
+  storageSet(TOKEN_KEY, token);
 }
 
 export function getAccessToken() {
   return accessToken;
+}
+
+/** `Authorization: Bearer …` header for raw fetch() callers (SSE, media). */
+export function authHeaders(): Record<string, string> {
+  return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 }
 
 export function setUnauthorizedHandler(fn: (() => void) | null) {
