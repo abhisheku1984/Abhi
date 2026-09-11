@@ -206,6 +206,9 @@ export const endpoints = {
   register: (email: string, password: string, name: string) =>
     api.post<{ access_token: string; user: User }>('/auth/register', { email, password, name }),
   me: () => api.get<User>('/auth/me'),
+  updateMe: (body: Record<string, unknown>) => api.patch<User>('/auth/me', body),
+  changePassword: (current_password: string, new_password: string) =>
+    api.post<{ ok: boolean }>('/auth/password', { current_password, new_password }),
 
   projects: (params?: Record<string, unknown>) => api.get<{ items: Project[]; total: number }>('/projects', params),
   createProject: (body: Partial<Project>) => api.post<Project>('/projects', body),

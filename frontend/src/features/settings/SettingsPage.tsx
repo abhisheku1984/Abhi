@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Palette, Server, ShieldCheck } from 'lucide-react';
+import { Palette, Server, ShieldCheck, UserRound } from 'lucide-react';
 import { Branding, endpoints } from '@/lib/api';
 import { Badge, Button, Card, Input, SectionTitle, Select, Tabs, TextArea, Toggle } from '@/components/ui';
 import { useAppStore } from '@/app/store';
 import { hexToRgbTriplet } from '@/lib/format';
 
-type Tab = 'branding' | 'providers' | 'moderation';
+type Tab = 'branding' | 'providers' | 'moderation' | 'account';
+
+function ErrorText({ value }: { value: string | null }) {
+  if (!value) return null;
+  return <p className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger">{value}</p>;
+}
 
 export function SettingsPage() {
   const store = useAppStore();
@@ -16,6 +21,9 @@ export function SettingsPage() {
   const [providers, setProviders] = useState<any[]>([]);
   const [moderation, setModeration] = useState<any>({});
   const [saving, setSaving] = useState(false);
+  const [profile, setProfile] = useState({ name: user?.name ?? '' });
+  const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
     endpoints.branding().then(setBranding).catch(() => null);
@@ -34,6 +42,41 @@ export function SettingsPage() {
       toast({ kind: 'success', title: 'Branding updated' });
     } catch (err) {
       toast({ kind: 'error', title: 'Could not save branding', message: (err as Error).message });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveProfile() {
+    setSaving(true);
+    try {
+      const updated = await endpoints.updateMe({ name: profile.name.trim() });
+      store.setUser(updated);
+      toast({ kind: 'success', title: 'Profile updated' });
+    } catch (err) {
+      toast({ kind: 'error', title: 'Could not save profile', message: (err as Error).message });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function changePassword() {
+    setPasswordError(null);
+    if (passwords.next.length < 8) {
+      setPasswordError('The new password must be at least 8 characters long.');
+      return;
+    }
+    if (passwords.next !== passwords.confirm) {
+      setPasswordError('The two new passwords do not match.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await endpoints.changePassword(passwords.current, passwords.next);
+      setPasswords({ current: '', next: '', confirm: '' });
+      toast({ kind: 'success', title: 'Password changed' });
+    } catch (err) {
+      setPasswordError((err as Error).message);
     } finally {
       setSaving(false);
     }
@@ -61,6 +104,7 @@ export function SettingsPage() {
           { id: 'branding', label: 'Branding', icon: <Palette className="h-3.5 w-3.5" /> },
           { id: 'providers', label: 'AI providers', icon: <Server className="h-3.5 w-3.5" /> },
           { id: 'moderation', label: 'Safety & rights', icon: <ShieldCheck className="h-3.5 w-3.5" /> },
+          { id: 'account', label: 'Account', icon: <UserRound className="h-3.5 w-3.5" /> },
         ]}
         value={tab}
         onChange={(id) => setTab(id as Tab)}
@@ -183,6 +227,40 @@ export function SettingsPage() {
             onChange={(e) => setModeration({ ...moderation, blocklist: e.target.value })} />
           <Button variant="primary" onClick={() => void saveModeration()}>Save safety settings</Button>
         </Card>
+      )}
+
+      {tab === 'account' && (
+        <div className="grid gap-4 xl:grid-cols-2">
+          <Card className="space-y-3">
+            <SectionTitle title="Profile" subtitle="How your name appears on assets and audit entries" />
+            <Input label="Name" value={profile.name}
+              onChange={(e) => setProfile({ name: e.target.value })} />
+            <Input label="Email" value={user?.email ?? ''} disabled
+              hint="Contact your administrator to change the account email." />
+            <div className="flex flex-wrap gap-2 text-[11px] text-ink-faint">
+              <Badge tone="default">{user?.role ?? 'viewer'}</Badge>
+              <Badge tone="default">{(user?.storage_used_mb ?? 0).toFixed(1)} MB used</Badge>
+            </div>
+            <Button variant="primary" disabled={saving || !profile.name.trim()} onClick={() => void saveProfile()}>
+              Save profile
+            </Button>
+          </Card>
+
+          <Card className="space-y-3">
+            <SectionTitle title="Password" subtitle="Eight characters or more. You stay signed in on this device." />
+            <Input label="Current password" type="password" value={passwords.current}
+              onChange={(e) => setPasswords({ ...passwords, current: e.target.value })} />
+            <Input label="New password" type="password" value={passwords.next}
+              onChange={(e) => setPasswords({ ...passwords, next: e.target.value })} />
+            <Input label="Confirm new password" type="password" value={passwords.confirm}
+              onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} />
+            <ErrorText value={passwordError} />
+            <Button variant="primary" disabled={saving || !passwords.current || !passwords.next}
+              onClick={() => void changePassword()}>
+              Change password
+            </Button>
+          </Card>
+        </div>
       )}
     </div>
   );
