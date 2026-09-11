@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Film, ImageIcon, Music4, Plus, Trash2, Type } from 'lucide-react';
-import { Asset, endpoints } from '@/lib/api';
+import { Asset, endpoints, withToken } from '@/lib/api';
 import { Badge, Button, Card, EmptyState, Input, ProgressBar, SectionTitle, Select, Slider } from '@/components/ui';
 import { clsx } from '@/lib/format';
 import { useAppStore } from '@/app/store';
@@ -130,7 +130,7 @@ export function EditorPage() {
                   <button key={asset.id} onClick={() => addClip(asset, group.track)}
                     className="flex w-full items-center gap-2 rounded-lg border border-edge bg-surface-2/40 p-1.5 text-left transition hover:border-brand/50">
                     <div className="h-8 w-12 shrink-0 overflow-hidden rounded border border-edge bg-black/40">
-                      {group.track !== 'audio' && <img src={asset.thumbnail_url || asset.url} alt="" className="h-full w-full object-cover" />}
+                      {group.track !== 'audio' && <img src={withToken(asset.thumbnail_url || asset.url)} alt="" className="h-full w-full object-cover" />}
                     </div>
                     <span className="min-w-0 flex-1 truncate text-[11px] text-ink-dim">{asset.name}</span>
                     <Plus className="h-3 w-3 text-ink-faint" />

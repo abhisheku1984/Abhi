@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Download, Film, Heart, Music4, Sparkles, Trash2, Copy, ImageIcon, Loader2, Wand2, Layers } from 'lucide-react';
-import { Asset, endpoints } from '@/lib/api';
+import { Asset, endpoints, withToken } from '@/lib/api';
 import { Badge, IconButton, Modal, Button } from '@/components/ui';
 import { bytes, clsx, duration as fmtDuration, relativeTime } from '@/lib/format';
 import { useAppStore } from '@/app/store';
 
 export function AssetThumb({ asset, className }: { asset: Asset; className?: string }) {
-  const src = (asset.kind === 'video'
+  const src = withToken((asset.kind === 'video'
     ? asset.thumbnail_url || asset.preview_url
-    : asset.thumbnail_url || asset.url) ?? undefined;
+    : asset.thumbnail_url || asset.url) ?? undefined);
   if (asset.kind === 'image' || asset.kind === 'avatar' || asset.kind === 'character') {
     return <img src={src} alt={asset.name} loading="lazy" className={clsx('h-full w-full object-cover', className)} />;
   }
@@ -82,7 +82,7 @@ export function AssetCard({ asset, onChanged, onOpen, selected }: {
       </div>
 
       <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition group-hover:opacity-100">
-        <a href={asset.url} download onClick={(e) => e.stopPropagation()}>
+        <a href={withToken(asset.url)} download onClick={(e) => e.stopPropagation()}>
           <IconButton label="Download"><Download className="h-3.5 w-3.5" /></IconButton>
         </a>
         <IconButton label="Duplicate" onClick={(e) => { e.stopPropagation(); void duplicate(); }}>
@@ -171,7 +171,7 @@ export function AssetModal({ asset, onClose, onChanged }: {
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Close</Button>
-          <a href={asset.url} download>
+          <a href={withToken(asset.url)} download>
             <Button variant="primary" icon={<Download className="h-4 w-4" />}>Download</Button>
           </a>
         </>
@@ -179,12 +179,12 @@ export function AssetModal({ asset, onClose, onChanged }: {
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <div className="overflow-hidden rounded-xl border border-edge bg-black/40">
           {asset.kind === 'video' ? (
-            <video src={asset.preview_url || asset.url} poster={asset.thumbnail_url || undefined}
+            <video src={withToken(asset.preview_url || asset.url)} poster={withToken(asset.thumbnail_url) || undefined}
               controls className="max-h-[52vh] w-full" />
           ) : asset.kind === 'audio' ? (
-            <div className="p-6"><audio src={asset.url} controls className="w-full" /></div>
+            <div className="p-6"><audio src={withToken(asset.url)} controls className="w-full" /></div>
           ) : (
-            <img src={asset.url} alt={asset.name} className="max-h-[52vh] w-full object-contain" />
+            <img src={withToken(asset.url)} alt={asset.name} className="max-h-[52vh] w-full object-contain" />
           )}
         </div>
 

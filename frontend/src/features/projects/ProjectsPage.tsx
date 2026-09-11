@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FolderKanban, Plus, Search, Star } from 'lucide-react';
-import { Project, endpoints } from '@/lib/api';
+import { Project, endpoints, withToken } from '@/lib/api';
 import { Badge, Button, Card, EmptyState, Input, Modal, Select, Skeleton, StatCard, TextArea } from '@/components/ui';
 import { relativeTime } from '@/lib/format';
 import { useAppStore } from '@/app/store';
@@ -91,7 +91,7 @@ export function ProjectsPage() {
               <Link to={`/projects/${project.id}`} className="block">
                 <div className="mb-3 flex h-28 items-center justify-center overflow-hidden rounded-xl border border-edge bg-surface-2">
                   {project.thumbnail_url ? (
-                    <img src={project.thumbnail_url} alt="" className="h-full w-full object-cover" />
+                    <img src={withToken(project.thumbnail_url)} alt="" className="h-full w-full object-cover" />
                   ) : (
                     <FolderKanban className="h-7 w-7 text-ink-faint" />
                   )}

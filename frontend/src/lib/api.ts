@@ -62,6 +62,16 @@ export function authHeaders(): Record<string, string> {
   return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 }
 
+/** Media URLs (asset.url / thumbnail_url / preview_url) hit the auth-protected
+    /files route. <img>/<video>/<audio> tags and plain download links cannot
+    send the Authorization header, so the JWT is attached as a ?token= query
+    param instead — the files route accepts either form (same session). */
+export function withToken(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  if (!accessToken) return url;
+  return `${url}${url.includes('?') ? '&' : '?'}token=${encodeURIComponent(accessToken)}`;
+}
+
 export function setUnauthorizedHandler(fn: (() => void) | null) {
   onUnauthorized = fn;
 }

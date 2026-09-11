@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AudioLines, Play } from 'lucide-react';
-import { Asset, endpoints } from '@/lib/api';
+import { Asset, endpoints, withToken } from '@/lib/api';
 import { Badge, Button, Card, SectionTitle, Select, Slider } from '@/components/ui';
 import { bytes, duration as fmtDuration } from '@/lib/format';
 import { useAppStore } from '@/app/store';
@@ -100,7 +100,7 @@ export function AudioPage() {
                   {asset.meta?.placeholder && <Badge tone="warn">placeholder</Badge>}
                 </div>
               </div>
-              <audio src={asset.url} controls className="max-w-[280px] flex-1" />
+              <audio src={withToken(asset.url)} controls className="max-w-[280px] flex-1" />
             </Card>
           ))}
         </div>

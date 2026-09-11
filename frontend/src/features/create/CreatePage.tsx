@@ -4,7 +4,7 @@ import {
   AudioLines, Camera, Clapperboard, Download, Film, ImageIcon, Mic2, Sparkles, Upload,
   UserSquare2, Wand2, X, Layers, RefreshCw, Heart,
 } from 'lucide-react';
-import { Asset, ModelInfo, endpoints, fileUrl } from '@/lib/api';
+import { Asset, ModelInfo, endpoints, fileUrl, withToken } from '@/lib/api';
 import { Badge, Button, Card, ErrorCallout, Input, ProgressBar, Select, Slider, Tabs, TextArea } from '@/components/ui';
 import { AssetThumb } from '@/components/assets/AssetCard';
 import { bytes, clsx, duration as fmtDuration } from '@/lib/format';
@@ -360,12 +360,12 @@ export function CreatePage() {
                   {latest.map((asset) => (
                     <div key={asset.id} className="overflow-hidden rounded-lg border border-edge bg-black/40">
                       {asset.kind === 'video' ? (
-                        <video src={asset.preview_url || asset.url} poster={asset.thumbnail_url || undefined}
+                        <video src={withToken(asset.preview_url || asset.url)} poster={withToken(asset.thumbnail_url) || undefined}
                           controls className="max-h-[420px] w-full" />
                       ) : asset.kind === 'audio' ? (
-                        <div className="p-6"><audio src={asset.url} controls className="w-full" /></div>
+                        <div className="p-6"><audio src={withToken(asset.url)} controls className="w-full" /></div>
                       ) : (
-                        <img src={asset.url} alt={asset.name} className="max-h-[420px] w-full object-contain" />
+                        <img src={withToken(asset.url)} alt={asset.name} className="max-h-[420px] w-full object-contain" />
                       )}
                       <div className="flex items-center justify-between gap-2 border-t border-edge bg-surface-1/70 px-2 py-1.5">
                         <span className="truncate text-[10px] text-ink-faint">
@@ -373,7 +373,7 @@ export function CreatePage() {
                           {asset.duration_sec ? ` · ${fmtDuration(asset.duration_sec)}` : ''}
                         </span>
                         <div className="flex gap-1">
-                          <a href={asset.url} download><Button size="sm" variant="ghost"><Download className="h-3.5 w-3.5" /></Button></a>
+                          <a href={withToken(asset.url)} download><Button size="sm" variant="ghost"><Download className="h-3.5 w-3.5" /></Button></a>
                           <Button size="sm" variant="ghost"
                             onClick={() => void endpoints.updateAsset(asset.id, { is_favorite: true })
                               .then(() => toast({ kind: 'success', title: 'Added to favourites' }))}>
