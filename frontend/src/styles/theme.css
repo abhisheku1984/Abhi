@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Brand tokens are driven at runtime from /settings/branding (§1) */
+:root {
+  --brand: 124 92 255;
+  --brand-fg: 255 255 255;
+  --brand-muted: 96 74 200;
+  --accent: 34 211 238;
+  --surface-0: 9 9 13;
+  --surface-1: 15 15 21;
+  --surface-2: 21 21 30;
+  --surface-3: 30 30 42;
+  --edge: 39 39 54;
+  --ink: 244 244 250;
+  --ink-dim: 168 168 188;
+  --ink-faint: 118 118 140;
+}
+
+:root[data-theme='light'] {
+  --surface-0: 248 248 252;
+  --surface-1: 255 255 255;
+  --surface-2: 243 243 249;
+  --surface-3: 232 232 242;
+  --edge: 219 219 232;
+  --ink: 20 20 32;
+  --ink-dim: 84 84 108;
+  --ink-faint: 132 132 156;
+}
+
+* {
+  border-color: rgb(var(--edge));
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-surface-0 text-ink antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04';
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--surface-3));
+  border-radius: 999px;
+  border: 2px solid rgb(var(--surface-0));
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--edge));
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-edge bg-surface-1/80 backdrop-blur-xl;
+  }
+  .panel-2 {
+    @apply rounded-xl border border-edge bg-surface-2/60;
+  }
+  .label {
+    @apply text-[11px] font-medium uppercase tracking-wider text-ink-faint;
+  }
+  .input {
+    @apply w-full rounded-lg border border-edge bg-surface-2/70 px-3 py-2 text-sm text-ink
+           placeholder:text-ink-faint outline-none transition
+           focus:border-brand/70 focus:ring-2 focus:ring-brand/20;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-edge bg-surface-2/70 px-2 py-0.5
+           text-[11px] font-medium text-ink-dim;
+  }
+  .glow {
+    box-shadow: 0 0 0 1px rgb(var(--brand) / 0.35), 0 18px 60px -24px rgb(var(--brand) / 0.55);
+  }
+  .grid-fade {
+    background-image: radial-gradient(circle at 1px 1px, rgb(var(--edge)) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .scroll-thin {
+    scrollbar-width: thin;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgb(var(--surface-3)), transparent);
+  background-size: 200% 100%;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgb(var(--surface-3));
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgb(var(--brand));
+  border: 2px solid rgb(var(--surface-1));
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgb(var(--brand) / 0.5);
+}
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgb(var(--surface-1));
+  border-radius: 999px;
+  background: rgb(var(--brand));
+  cursor: pointer;
+}

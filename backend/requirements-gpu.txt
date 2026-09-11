@@ -1,0 +1,10 @@
+# OPTIONAL. Never installed automatically. Requires explicit user action:
+#   pip install -r backend/requirements-gpu.txt
+# Enables Tier-B adapters (diffusers/onnxruntime). Multi-GB model downloads
+# are still gated behind the in-app Model Manager with user confirmation.
+torch>=2.5.0
+diffusers>=0.32.0
+transformers>=4.47.0
+accelerate>=1.2.0
+safetensors>=0.4.5
+onnxruntime>=1.20.0

@@ -1,0 +1,26 @@
+# ---- core (required, installs anywhere) ----
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+sqlalchemy==2.0.36
+alembic==1.14.0
+pyjwt==2.10.1
+python-multipart==0.0.20
+pillow==11.0.0
+numpy==2.1.3
+imageio-ffmpeg==0.6.0
+aiofiles==24.1.0
+python-ulid==3.0.0
+httpx==0.28.1
+structlog==24.4.0
+prometheus-client==0.21.1
+slowapi==0.1.9
+
+# ---- database drivers ----
+psycopg[binary]==3.2.3
+
+# ---- testing ----
+pytest==8.3.4
+pytest-asyncio==0.25.0
+email-validator==2.2.0
