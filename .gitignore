@@ -1,0 +1,30 @@
+# ---- runtime data (generated assets, db, logs) ----
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# ---- python ----
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# ---- node / frontend build ----
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# ---- secrets ----
+.env
+.env.local
+
+# ---- os / editor ----
+.DS_Store
+Thumbs.db
+*.log
