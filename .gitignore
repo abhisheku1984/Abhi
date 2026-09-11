@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Runtime storage (assets, models, temp files - never commit generated media)
+/storage/
+backend/storage/
+storage/
+*.db
+*.db-wal
+*.db-shm
+
+# Logs
+/logs/
+*.log
+
+# Frontend
+node_modules/
+dist/
+.vite/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

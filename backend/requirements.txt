@@ -1,0 +1,52 @@
+# ---------------------------------------------------------------------------
+# AI Creative Studio - backend requirements
+# Core install is small and CPU-only. Heavy AI stacks are OPTIONAL and are
+# never installed automatically (see "Optional AI stacks" at the bottom).
+# ---------------------------------------------------------------------------
+
+# --- Web / API -------------------------------------------------------------
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+slowapi>=0.1.9
+websockets>=12.0
+httpx>=0.27.0
+
+# --- Data ------------------------------------------------------------------
+SQLAlchemy>=2.0.30
+alembic>=1.13.1
+aiosqlite>=0.20.0
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+
+# --- Auth / security -------------------------------------------------------
+PyJWT>=2.8.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.1
+python-dotenv>=1.0.1
+
+# --- Media (CPU, real processing) -----------------------------------------
+Pillow>=10.3.0
+numpy>=1.26.0
+imageio-ffmpeg>=0.4.9   # ships a real static FFmpeg binary (cross-platform)
+
+# --- Utils -----------------------------------------------------------------
+aiofiles>=23.2.1
+
+# --- Testing ---------------------------------------------------------------
+pytest>=8.2.0
+pytest-asyncio>=0.23.6
+
+# ---------------------------------------------------------------------------
+# Optional AI stacks - NOT installed by default.
+# Install only on a machine that meets the documented VRAM/RAM requirements.
+# Every adapter degrades to "MODEL NOT AVAILABLE" / "HARDWARE REQUIREMENT NOT MET"
+# when these are missing; nothing in the app hard-imports them.
+# ---------------------------------------------------------------------------
+# torch>=2.3.0 ; torchvision ; diffusers>=0.29.0 ; transformers>=4.41.0
+# accelerate>=0.30.0 ; safetensors>=0.4.3 ; sentencepiece ; controlnet_aux
+# opencv-python-headless ; rembg[gpu] ; realesrgan ; basicsr
+# psycopg[binary]>=3.1.19   # PostgreSQL
+# redis>=5.0.0 ; rq>=1.16.0 # Redis-backed queue
+# boto3>=1.34.0             # S3-compatible storage
+# piper-tts / pyttsx3       # local TTS
