@@ -1,0 +1,47 @@
+# Optional: PostgreSQL + Redis + API for team/multi-process deployments.
+# The default single-user install needs none of this (SQLite + local storage).
+services:
+  api:
+    build:
+      context: ./backend
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql+psycopg://studio:studio@db:5432/studio
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_BACKEND: local
+      STORAGE_LOCAL_ROOT: /app/backend/storage
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      WORKER_CONCURRENCY: "4"
+    volumes:
+      - studio-storage:/app/backend/storage
+      - studio-data:/app/backend/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: studio
+      POSTGRES_PASSWORD: studio
+      POSTGRES_DB: studio
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studio -d studio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "60", "1"]
+
+volumes:
+  studio-storage: {}
+  studio-data: {}
+  pgdata: {}

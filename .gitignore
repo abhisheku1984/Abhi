@@ -1,0 +1,42 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# ---- Node ----
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+coverage/
+
+# ---- project data (never commit user content) ----
+backend/data/
+backend/storage/
+backend/backups/
+backups/
+*.db
+*.sqlite3
+*.log
+
+# ---- env / secrets ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- editors / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
