@@ -28,4 +28,4 @@ Write-Step "Installing GPU requirements (this is a large download)"
 & $VenvPython -m pip install -r (Join-Path $Backend 'requirements-gpu.txt')
 Write-Host ""
 Write-Host "GPU extras installed. Restart the platform, then confirm in Model Manager." -ForegroundColor Green
-Write-Host "No weights are downloaded automatically — install models from Model Manager when you are ready."
+Write-Host "No weights are downloaded automatically - install models from Model Manager when you are ready."
