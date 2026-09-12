@@ -11,6 +11,15 @@ _HERE = Path(__file__).resolve()
 BACKEND_ROOT = _HERE.parents[2]
 REPO_ROOT = BACKEND_ROOT.parent
 
+# Realise the documented contract: EVERY value in backend/.env is "read from
+# the environment at startup" (.env.example §42.7). Engine/provider adapters
+# read os.getenv() directly (model paths, provider keys), which only sees the
+# real process environment — without this, values set in backend/.env were
+# invisible to them. load_dotenv does NOT override real environment
+# variables, so real-env deployments keep precedence (real env > .env > none).
+from dotenv import load_dotenv
+load_dotenv(BACKEND_ROOT / ".env")
+
 
 class Settings(BaseSettings):
     """All configuration comes from environment variables / .env.
